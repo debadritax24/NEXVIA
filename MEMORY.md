@@ -2,155 +2,81 @@
 
 ## Current Phase
 
-Phase 0 — Project Initialization
+Phase 4 — Loading/Error States + Shared Components Built
 
 ## Completed Work
 
-- Created `AGENTS.md` — project instruction manual for coding agents
-- Created `SKILL.md` — frontend engineering knowledge base
-- Created `MEMORY.md` — this persistent project memory
+### Foundation
+- Next.js 16.3.5, TypeScript strict, Tailwind CSS v4
+- Clerk v7.9.4 authentication
+- Framer Motion, Lenis, clsx, tailwind-merge
 
-## Current Architecture
+### UI Primitives (22 in src/components/ui/)
+- Button, Input, Card, Badge, Skeleton, Progress
+- Tabs, Avatar, EmptyState, PageHeader, StatCard
+- SkillBar, MatchScore, SearchInput
+- Modal, Drawer, Toast (provider + hook + container), ConfirmationDialog
+- Dropdown, Breadcrumb, EmptyDashboard, LoadingSpinner
 
-- **Framework:** Next.js (App Router)
-- **Language:** TypeScript (strict)
-- **Styling:** Tailwind CSS
-- **Animation:** Framer Motion
-- **Smooth Scrolling:** Lenis
-- **Authentication:** Clerk
-- **Theme:** White minimal background, official Indian government registered website aesthetic
+### Layout (4 in src/components/layout/)
+- Header, Footer, DashboardSidebar (role-based), MobileNav
 
-## Routes
+### Shared (2 in src/components/shared/)
+- SmoothScroll, OpportunityCard
 
-| Route | Type | Description |
-|-------|------|-------------|
-| `/` | Public | Landing page |
-| `/sign-in/[[...sign-in]]` | Public | Clerk sign-in |
-| `/sign-up/[[...sign-up]]` | Public | Clerk sign-up |
-| `/dashboard` | Protected | Main dashboard (role-based redirect) |
-| `/student` | Protected | Student dashboard |
-| `/student/assessment` | Protected | Skill assessment |
-| `/student/skills` | Protected | Skill profile |
-| `/student/opportunities` | Protected | Job/internship discovery |
-| `/industry` | Protected | Industry dashboard |
-| `/institution` | Protected | Institution dashboard |
-| `/faculty` | Protected | Faculty dashboard |
+### Mock Data (5 in src/lib/api/)
+- skills, opportunities, applications, profile, index
 
-## Components
+### Landing (10 sections in src/components/landing/)
 
-### UI Primitives (Planned)
+## Routes (43 total)
 
-- `Button` — primary, secondary, ghost, outline variants
-- `Card` — content container with optional hover
-- `Input` — text, email, password with label/error
-- `Badge` — skill level, status indicators
-- `Avatar` — user profile image
-- `Skeleton` — loading placeholders
-- `Modal` — dialog overlays
-- `Progress` — skill/readiness bars
+### Public (7)
+`/`, `/about`, `/how-it-works`, `/opportunities`, `/opportunities/[id]`, `/sign-in`, `/sign-up`
 
-### Layout (Planned)
+### Onboarding (1)
+`/onboarding` — 7-step wizard
 
-- `Header` — top navigation with auth state
-- `Footer` — site links, branding
-- `Sidebar` — dashboard navigation
-- `PageContainer` — consistent page wrapper
+### Student (13)
+`/student`, `/student/skills`, `/student/assessment`, `/student/assessment/results`, `/student/learning`, `/student/career`, `/student/passport`, `/student/applications`, `/student/mentorship`, `/student/copilot`, `/student/profile`, `/student/notifications`, `/student/projects`
 
-### Landing (Planned)
+### Industry (6)
+`/industry`, `/industry/opportunities`, `/industry/opportunities/new`, `/industry/candidates`, `/industry/candidates/[id]`, `/industry/collaboration`
 
-- `Hero` — main CTA section with animation
-- `ProblemSection` — student pain points
-- `HowItWorks` — step-by-step flow
-- `SkillIntelligence` — skill visualization
-- `CareerPath` — career journey visualization
-- `OpportunityMatching` — match demo
-- `SkillPassport` — digital identity showcase
-- `IndustryConnection` — ecosystem visualization
-- `InstitutionIntelligence` — analytics preview
-- `FinalCTA` — closing call to action
+### Institution (5)
+`/institution`, `/institution/skills`, `/institution/industry-demand`, `/institution/training`, `/institution/students`
 
-## Design System
+### Faculty (5)
+`/faculty`, `/faculty/students`, `/faculty/opportunities`, `/faculty/training`, `/faculty/collaboration`
 
-### Colors (Planned)
+### Admin (6)
+`/admin`, `/admin/users`, `/admin/skills`, `/admin/organizations`, `/admin/reports`
 
-- **Primary:** Deep Blue (trust, professionalism)
-- **Accent:** Vibrant Orange/Saffron (energy, Indian identity)
-- **Success:** Green
-- **Warning:** Amber
-- **Error:** Red
-- **Background:** White (#FFFFFF)
-- **Surface:** Light Gray (#F8FAFC)
-- **Text Primary:** Near Black (#0F172A)
-- **Text Secondary:** Slate (#64748B)
+## Loading States (8)
+- Root: `src/app/loading.tsx`
+- Student: `src/app/student/loading.tsx`
+- Industry: `src/app/industry/loading.tsx`
+- Institution: `src/app/institution/loading.tsx`
+- Faculty: `src/app/faculty/loading.tsx`
+- Admin: `src/app/admin/loading.tsx`
 
-### Typography (Planned)
+## Error/Not-Found
+- Global error: `src/app/error.tsx`
+- 404: `src/app/not-found.tsx`
 
-- **Headings:** Inter (bold, modern)
-- **Body:** Inter (regular, readable)
-- **Monospace:** JetBrains Mono (code, numbers)
-
-### Spacing
-
-- Tailwind default scale
-- Consistent 4px base unit
-
-## Authentication
-
-- **Provider:** Clerk
-- **Public Routes:** `/`, `/sign-in`, `/sign-up`
-- **Protected Routes:** All dashboard routes
-- **Role-Based Routing:** After login, redirect based on user role
-- **Middleware:** Clerk middleware for route protection
-
-## API Integration
-
-- **Status:** Not yet implemented
-- **Planned:** Centralized API client in `lib/api/`
-- **Pattern:** Server Components fetch directly, Client Components use API utility
-
-## Known Issues
-
-- None yet (fresh project)
-
-## Decisions Made
-
-1. Use Next.js App Router (not Pages Router)
-2. Use Clerk for authentication (not custom)
-3. Only use `.env` file (no `.env.example`, `.env.local`)
-4. White minimal background theme
-5. Official Indian government registered website aesthetic
-6. Mobile-first responsive design
-7. Server Components as default, Client Components only when needed
-8. Framer Motion for purposeful animations only
-9. Lenis for smooth scrolling on marketing pages
+## Build Status
+- TypeScript: Zero errors
+- Build: 43 pages, passes
+- Lint: 0 errors, 1 warning (avatar `<img>` — acceptable for external URLs)
+- Dev Server: All routes HTTP 200
 
 ## Pending Work
-
-- [ ] Initialize Next.js project
-- [ ] Configure Tailwind CSS with custom theme
-- [ ] Set up Clerk authentication
-- [ ] Configure Lenis smooth scrolling
-- [ ] Create UI primitive components
-- [ ] Create layout components
-- [ ] Build landing page sections
-- [ ] Build student dashboard
-- [ ] Build industry dashboard
-- [ ] Build institution dashboard
-- [ ] Build faculty dashboard
-- [ ] Integrate backend APIs
+- [ ] Form validation with Zod
+- [ ] Responsive mobile testing
+- [ ] Accessibility audit
+- [ ] API integration layer
+- [ ] Integrate Toast/Modal into pages
 
 ## Next Recommended Task
 
-Initialize the Next.js project with TypeScript, Tailwind CSS, and verify the development server runs correctly.
-
-## Important Constraints
-
-- Do NOT create `.env.example`, `.env.local`, `.env.development`, or `.env.production`
-- Only use `.env` for environment variables
-- Never hardcode secrets or API keys
-- Never commit `.env` to Git
-- Use Server Components by default
-- Only use Client Components when interactivity requires it
-- Respect `prefers-reduced-motion`
-- Minimum 44px touch targets
-- WCAG AA color contrast
+Integrate the new shared components (Toast, Modal, ConfirmationDialog) into existing pages, then add Zod form validation for onboarding and opportunity creation forms.
