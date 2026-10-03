@@ -6,6 +6,9 @@ Phase 4 — Loading/Error States + Shared Components Built
 
 ## Completed Work
 
+### Documentation
+- README documents the current stack, setup, route groups, scripts, and sample-data/authentication status.
+
 ### Foundation
 - Next.js 16.3.5, TypeScript strict, Tailwind CSS v4
 - Clerk v7.9.4 authentication
