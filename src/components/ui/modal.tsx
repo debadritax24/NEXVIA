@@ -1,128 +1,44 @@
 "use client";
 
-import { useEffect, useCallback, useRef, type ReactNode } from "react";
-import { createPortal } from "react-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
-
-type ModalSize = "sm" | "md" | "lg";
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
   title?: string;
   children: ReactNode;
-  size?: ModalSize;
+  size?: "sm" | "md" | "lg";
+  side?: "left" | "right";
 }
 
-const sizeStyles: Record<ModalSize, string> = {
-  sm: "max-w-md",
-  md: "max-w-lg",
-  lg: "max-w-2xl",
-};
-
-export function Modal({
-  open,
-  onClose,
-  title,
-  children,
-  size = "md",
-}: ModalProps) {
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "Tab" && panelRef.current) {
-        const focusable = panelRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    },
-    [onClose]
-  );
-
+// Native dialogs provide focus containment, inert background content and Escape handling.
+export function Modal({ open, onClose, title = "Dialog", children, size = "md", side }: ModalProps) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
   useEffect(() => {
-    if (!open) return;
+    const dialog = ref.current;
+    if (!open || !dialog) return;
+    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const overflow = document.body.style.overflow;
+    dialog.showModal();
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", handleKeyDown);
-    panelRef.current?.focus();
     return () => {
-      document.body.style.overflow = "";
-      document.removeEventListener("keydown", handleKeyDown);
+      dialog.close();
+      document.body.style.overflow = overflow;
+      trigger?.focus();
     };
-  }, [open, handleKeyDown]);
+  }, [open]);
 
-  return createPortal(
-    <AnimatePresence>
-      {open && (
-        <div
-          ref={overlayRef}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          onClick={(e) => {
-            if (e.target === overlayRef.current) onClose();
-          }}
-        >
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/50"
-          />
-          <motion.div
-            ref={panelRef}
-            tabIndex={-1}
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ duration: 0.2 }}
-            className={cn(
-              "relative w-full rounded-xl bg-white p-6 shadow-xl outline-none",
-              sizeStyles[size]
-            )}
-          >
-            <div className="flex items-center justify-between mb-4">
-              {title && (
-                <h2 className="text-lg font-semibold text-slate-900">
-                  {title}
-                </h2>
-              )}
-              <button
-                onClick={onClose}
-                className="ml-auto rounded-md p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            {children}
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>,
-    document.body
+  return (
+    <dialog ref={ref} aria-labelledby={titleId} onCancel={(event) => { event.preventDefault(); onClose(); }}
+      onClick={(event) => { if (event.target === event.currentTarget) { const r = event.currentTarget.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) onClose(); } }}
+      className={cn("fixed rounded-xl bg-white p-6 text-slate-900 shadow-xl backdrop:bg-black/50 w-[calc(100%-2rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto", { sm: "max-w-md", md: "max-w-lg", lg: "max-w-2xl" }[size], side ? `inset-y-0 m-0 h-dvh max-h-dvh rounded-none ${side === "left" ? "mr-auto" : "ml-auto"}` : "m-auto")}>
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <h2 id={titleId} className="text-lg font-semibold">{title}</h2>
+        <button type="button" onClick={onClose} aria-label="Close dialog" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg hover:bg-slate-100">✕</button>
+      </div>
+      {open && children}
+    </dialog>
   );
 }

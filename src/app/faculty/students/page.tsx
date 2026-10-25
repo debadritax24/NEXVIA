@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -85,6 +86,9 @@ const students = [
 ];
 
 export default function FacultyStudentsPage() {
+  const [search, setSearch] = useState("");
+  const [department, setDepartment] = useState("All Departments");
+  const filtered = students.filter((student) => (department === "All Departments" || student.department === department) && `${student.name} ${student.department}`.toLowerCase().includes(search.toLowerCase()));
   return (
     <div className="space-y-6">
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ duration: 0.4 }}>
@@ -97,9 +101,9 @@ export default function FacultyStudentsPage() {
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.1, duration: 0.4 }}>
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
-            <SearchInput placeholder="Search students..." />
+            <SearchInput value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search students..." />
           </div>
-          <select className="h-10 px-3 text-sm rounded-lg border border-slate-300 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+          <select aria-label="Department" value={department} onChange={(event) => setDepartment(event.target.value)} className="h-10 px-3 text-sm rounded-lg border border-slate-300 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
             <option>All Departments</option>
             <option>CSE</option>
             <option>IT</option>
@@ -108,8 +112,9 @@ export default function FacultyStudentsPage() {
         </div>
       </motion.div>
 
+      {filtered.length === 0 && <p role="status">No students match your search.</p>}
       <div className="space-y-4">
-        {students.map((student, i) => (
+        {filtered.map((student, i) => (
           <motion.div
             key={student.id}
             initial={{ opacity: 0, y: 12 }}
@@ -133,7 +138,7 @@ export default function FacultyStudentsPage() {
                   <p className="text-[10px] text-slate-500">Readiness</p>
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-green-600">{student.learningProgress}%</p>
+                  <p className="text-lg font-bold text-green-700">{student.learningProgress}%</p>
                   <p className="text-[10px] text-slate-500">Learning</p>
                 </div>
               </div>

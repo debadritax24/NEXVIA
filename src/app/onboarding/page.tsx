@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { onboardingSchema, onboardingSteps } from "@/lib/validations/forms";
+import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
 
 interface OnboardingData {
@@ -65,6 +67,8 @@ const slideVariants = {
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { addToast } = useToast();
+  const [error, setError] = useState("");
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [data, setData] = useState<OnboardingData>({
@@ -83,6 +87,11 @@ export default function OnboardingPage() {
   const progress = ((step + 1) / totalSteps) * 100;
 
   const navigate = (dir: number) => {
+    if (dir > 0) {
+      const result = onboardingSteps[step].safeParse(data);
+      if (!result.success) { setError(result.error.issues.map((issue) => issue.message).join(" ")); return; }
+    }
+    setError("");
     setDirection(dir);
     setStep((s) => s + dir);
   };
@@ -102,20 +111,18 @@ export default function OnboardingPage() {
     }));
   };
 
-  const canProceed = () => {
-    switch (step) {
-      case 0: return data.role !== "";
-      case 1: return data.interests.length >= 3;
-      case 2: return data.careerGoals.trim().length > 0 && data.careerPath !== "";
-      case 3: return Object.keys(data.skills).length > 0;
-      case 4: return data.experience !== "";
-      case 5: return data.opportunities.length > 0;
-      default: return true;
-    }
+  const complete = () => {
+    const result = onboardingSchema.safeParse(data);
+    if (!result.success) { setError(result.error.issues.map((issue) => issue.message).join(" ")); return; }
+    try {
+      sessionStorage.setItem("nexvia-demo:onboarding", JSON.stringify(result.data));
+      addToast("success", "Demo profile saved in this tab. Your account permissions have not changed.");
+      router.push(`/${result.data.role}`);
+    } catch { setError("Your browser could not save this profile. Allow session storage and try again."); }
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2.5 mb-6">
@@ -125,7 +132,7 @@ export default function OnboardingPage() {
             <span className="text-xl font-bold text-slate-900">NEXVIA</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Set Up Your Profile</h1>
-          <p className="text-sm text-slate-500">Let&apos;s personalize your experience</p>
+          <p className="text-sm text-slate-500">Demo setup: your profile stays in this browser tab.</p>
         </div>
 
         <div className="mb-6">
@@ -155,6 +162,7 @@ export default function OnboardingPage() {
                     {roles.map((role) => (
                       <button
                         key={role.id}
+                        aria-pressed={data.role === role.id}
                         onClick={() => setData((d) => ({ ...d, role: role.id }))}
                         className={cn(
                           "flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all duration-200 text-center",
@@ -191,6 +199,7 @@ export default function OnboardingPage() {
                       return (
                         <button
                           key={interest}
+                          aria-pressed={selected}
                           onClick={() => toggleArrayItem("interests", interest)}
                           className={cn(
                             "px-4 py-2.5 rounded-full text-sm font-medium border transition-all duration-200",
@@ -205,7 +214,7 @@ export default function OnboardingPage() {
                     })}
                   </div>
                   {data.interests.length > 0 && data.interests.length < 3 && (
-                    <p className="mt-3 text-xs text-amber-600">Select at least {3 - data.interests.length} more</p>
+                    <p className="mt-3 text-xs text-amber-700">Select at least {3 - data.interests.length} more</p>
                   )}
                 </div>
               )}
@@ -216,8 +225,9 @@ export default function OnboardingPage() {
                   <p className="text-sm text-slate-500 mb-6">Tell us about your aspirations</p>
                   <div className="space-y-5">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1.5">Preferred Career Path</label>
+                      <label htmlFor="career-path" className="block text-sm font-medium text-slate-700 mb-1.5">Preferred Career Path</label>
                       <select
+                        id="career-path"
                         value={data.careerPath}
                         onChange={(e) => setData((d) => ({ ...d, careerPath: e.target.value }))}
                         className="w-full h-10 px-3 text-sm rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -229,13 +239,14 @@ export default function OnboardingPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1.5">What are your career goals?</label>
+                      <label htmlFor="career-goals" className="block text-sm font-medium text-slate-700 mb-1.5">What are your career goals?</label>
                       <textarea
+                        id="career-goals"
                         value={data.careerGoals}
                         onChange={(e) => setData((d) => ({ ...d, careerGoals: e.target.value }))}
                         placeholder="Describe your career aspirations, what you want to achieve, and where you see yourself in 5 years..."
                         rows={4}
-                        className="w-full px-3 py-2.5 text-sm rounded-lg border border-slate-300 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 resize-none"
+                        className="w-full px-3 py-2.5 text-sm rounded-lg border border-slate-300 bg-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 resize-none"
                       />
                     </div>
                   </div>
@@ -252,7 +263,9 @@ export default function OnboardingPage() {
                         <span className="text-sm font-medium text-slate-700 w-28 shrink-0">{skill}</span>
                         <div className="flex-1 flex items-center gap-3">
                           <input
+                            aria-label={`${skill} proficiency`}
                             type="range"
+                            style={{ minWidth: 0 }}
                             min={0}
                             max={100}
                             value={data.skills[skill] || 0}
@@ -282,8 +295,9 @@ export default function OnboardingPage() {
                             : "border-slate-200 hover:border-slate-300"
                         )}
                       >
-                        <div className={cn(
-                          "h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0",
+                        <input type="radio" name="experience" value={exp} checked={data.experience === exp} onChange={() => setData((d) => ({ ...d, experience: exp }))} className="h-5 w-5 accent-primary-500" />
+                        <div aria-hidden="true" className={cn(
+                          "hidden h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0",
                           data.experience === exp ? "border-primary-500" : "border-slate-300"
                         )}>
                           {data.experience === exp && (
@@ -300,6 +314,7 @@ export default function OnboardingPage() {
                       {data.projectLinks.map((link, i) => (
                         <Input
                           key={i}
+                          aria-label={`Project link ${i + 1}`}
                           placeholder="https://github.com/your-project"
                           value={link}
                           onChange={(e) => {
@@ -330,6 +345,7 @@ export default function OnboardingPage() {
                       return (
                         <button
                           key={opp}
+                          aria-pressed={selected}
                           onClick={() => toggleArrayItem("opportunities", opp)}
                           className={cn(
                             "px-4 py-2.5 rounded-full text-sm font-medium border transition-all duration-200",
@@ -346,6 +362,7 @@ export default function OnboardingPage() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1.5">Location Preference</label>
                     <Input
+                      aria-label="Location preference"
                       placeholder="e.g., Bangalore, Remote, Pan-India"
                       value={data.locationPreference}
                       onChange={(e) => setData((d) => ({ ...d, locationPreference: e.target.value }))}
@@ -414,7 +431,8 @@ export default function OnboardingPage() {
           </AnimatePresence>
         </div>
 
-        <div className="flex items-center justify-between mt-8">
+        {error && <p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-8">
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
@@ -434,16 +452,16 @@ export default function OnboardingPage() {
             ))}
           </div>
           {step < totalSteps - 1 ? (
-            <Button onClick={() => navigate(1)} disabled={!canProceed()}>
+            <Button onClick={() => navigate(1)}>
               Next
             </Button>
           ) : (
-            <Button onClick={() => router.push("/dashboard")}>
+            <Button onClick={complete}>
               Complete & Go to Dashboard
             </Button>
           )}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

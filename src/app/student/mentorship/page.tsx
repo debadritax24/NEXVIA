@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { DemoRequestButton } from "@/components/shared/demo-request-button";
 import { Avatar } from "@/components/ui/avatar";
 import { mockMentors } from "@/lib/api/profile";
 
@@ -60,9 +60,9 @@ export default function MentorshipPage() {
                       ))}
                     </div>
 
-                    <Button variant="primary" size="sm" className="mt-4" disabled={!mentor.available}>
+                    <DemoRequestButton requestKey={`student/mentorship-${mentor.name}`} title={mentor.name} variant="primary" size="sm" className="mt-4" disabled={!mentor.available}>
                       {mentor.available ? "Request Mentorship" : "Currently Unavailable"}
-                    </Button>
+                    </DemoRequestButton>
                   </div>
                 </div>
               </CardContent>

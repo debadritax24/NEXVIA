@@ -72,7 +72,7 @@ export default function FacultyDashboardPage() {
                   <p className="text-sm font-medium text-slate-900">{activity.student}</p>
                   <p className="text-xs text-slate-500">{activity.action}</p>
                 </div>
-                <span className="text-xs text-slate-400 shrink-0">{activity.time}</span>
+                <span className="text-xs text-slate-500 shrink-0">{activity.time}</span>
               </div>
             ))}
           </div>

@@ -5,9 +5,10 @@ import {
   useCallback,
   useContext,
   useState,
+  useEffect,
+  useRef,
   type ReactNode,
 } from "react";
-import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -55,12 +56,15 @@ let toastCounter = 0;
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
+
   const addToast = useCallback((type: ToastType, message: string) => {
     const id = `toast-${++toastCounter}`;
     setToasts((prev) => [...prev, { id, type, message }]);
-    setTimeout(() => {
+    timers.current.push(setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    }, 6000));
   }, []);
 
   const removeToast = useCallback((id: string) => {
@@ -90,18 +94,19 @@ function ToastContainer({
   toasts: Toast[];
   onRemove: (id: string) => void;
 }) {
-  return createPortal(
-    <div className="fixed bottom-4 right-4 z-[100] flex flex-col-reverse gap-2">
+  return (
+    <div className="fixed bottom-4 right-4 z-[100] flex w-[calc(100%-2rem)] max-w-sm flex-col-reverse gap-2">
       <AnimatePresence>
         {toasts.map((toast) => (
           <motion.div
             key={toast.id}
+            role={toast.type === "error" ? "alert" : "status"}
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "flex items-start gap-3 rounded-lg border p-4 shadow-lg min-w-[300px] max-w-sm",
+              "flex items-start gap-3 rounded-lg border p-4 shadow-lg w-full",
               typeStyles[toast.type]
             )}
           >
@@ -120,6 +125,7 @@ function ToastContainer({
             </svg>
             <p className="flex-1 text-sm font-medium">{toast.message}</p>
             <button
+              aria-label="Dismiss notification"
               onClick={() => onRemove(toast.id)}
               className="shrink-0 rounded p-0.5 opacity-60 hover:opacity-100 transition-opacity"
             >
@@ -140,7 +146,6 @@ function ToastContainer({
           </motion.div>
         ))}
       </AnimatePresence>
-    </div>,
-    document.body
+    </div>
   );
 }

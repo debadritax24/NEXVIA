@@ -86,7 +86,7 @@ export default function OpportunitiesPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-slate-700">Location:</span>
-              <select
+              <select aria-label="Sort opportunities"
                 value={selectedLocation}
                 onChange={(e) => setSelectedLocation(e.target.value)}
                 className="h-8 rounded-lg border border-slate-200 bg-white px-3 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"

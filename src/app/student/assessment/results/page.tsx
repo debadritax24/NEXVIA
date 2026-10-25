@@ -1,5 +1,6 @@
 "use client";
 
+import { AssessmentResult } from "@/components/shared/assessment-result";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
@@ -40,10 +41,12 @@ export default function AssessmentResultsPage() {
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
       <PageHeader
         title="Assessment Results"
-        description="Your React Fundamentals assessment results and skill analysis."
+        description="Your practice result and an illustrative skill-analysis dashboard."
         breadcrumbs={[{ label: "Student", href: "/student" }, { label: "Assessment", href: "/student/assessment" }, { label: "Results" }]}
       />
 
+      <AssessmentResult />
+      <h2 className="mb-4 text-lg">Sample skill analysis</h2>
       <motion.div
         variants={{ animate: { transition: { staggerChildren: 0.08 } } }}
         initial="initial"

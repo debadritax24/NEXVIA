@@ -71,7 +71,7 @@ export default function AdminDashboard() {
                         <span className="font-medium text-slate-900">{item.user}</span>{" "}
                         {item.action}
                       </p>
-                      <p className="text-xs text-slate-400 mt-0.5">{item.time}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{item.time}</p>
                     </div>
                     <Badge variant="default" size="sm">{item.role}</Badge>
                   </motion.div>

@@ -57,7 +57,7 @@ export default function IndustryDemandPage() {
         <div className="space-y-3">
           {demandedSkills.map((item, i) => (
             <div key={item.skill} className="flex items-center gap-4">
-              <span className="text-xs font-bold text-slate-400 w-5">{i + 1}</span>
+              <span className="text-xs font-bold text-slate-500 w-5">{i + 1}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
@@ -65,7 +65,7 @@ export default function IndustryDemandPage() {
                     <Badge variant="default" size="sm">{item.category}</Badge>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-green-600 font-medium">{item.growth}</span>
+                    <span className="text-xs text-green-700 font-medium">{item.growth}</span>
                     <span className="text-sm font-semibold text-slate-900">{item.demand}%</span>
                   </div>
                 </div>
@@ -115,7 +115,7 @@ export default function IndustryDemandPage() {
 
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.4, duration: 0.4 }} className="rounded-xl border border-slate-200 bg-white p-6">
         <h2 className="text-base font-semibold text-slate-900 mb-4">Student Supply vs Industry Demand</h2>
-        <div className="overflow-x-auto">
+        <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-100">

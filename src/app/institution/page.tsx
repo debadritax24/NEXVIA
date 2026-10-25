@@ -118,7 +118,7 @@ export default function InstitutionDashboardPage() {
       <div className="grid lg:grid-cols-2 gap-6">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.45, duration: 0.4 }} className="rounded-xl border border-slate-200 bg-white p-6">
           <h2 className="text-base font-semibold text-slate-900 mb-4">Department Readiness</h2>
-          <div className="overflow-x-auto">
+          <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-100">

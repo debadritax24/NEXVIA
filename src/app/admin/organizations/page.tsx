@@ -54,7 +54,7 @@ export default function AdminOrganizationsPage() {
 
         <TabsContent value="institutions">
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div className="overflow-x-auto">
+            <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-200">
@@ -102,7 +102,7 @@ export default function AdminOrganizationsPage() {
 
         <TabsContent value="companies">
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div className="overflow-x-auto">
+            <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-200">

@@ -23,6 +23,8 @@ This repository contains the NEXVIA frontend, built with the Next.js App Router.
 - Tailwind CSS 4
 - Clerk for authentication
 - Framer Motion and Lenis for interface motion and scrolling
+- Zod for runtime form and demo-storage validation
+- Playwright and axe for browser verification
 
 ## Getting Started
 
@@ -61,6 +63,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | --- | --- |
 | `npm run dev` | Start the Next.js development server |
 | `npm run lint` | Run ESLint |
+| `npm run typecheck` | Check TypeScript without emitting files |
+| `npm run test:e2e` | Run Chromium workflow, responsive-layout, and accessibility tests against the local server |
 | `npm run build` | Create a production build |
 | `npm run start` | Serve the production build |
 
@@ -96,7 +100,7 @@ public/         Static assets
 
 The frontend currently uses typed sample data exported from `src/lib/api/` for skills, opportunities, applications, and student profile-related views. A production backend and persistent data integration are not included in this repository yet. Treat displayed sample records as demonstration content, not live opportunities or user data.
 
-Clerk is wired into the root layout and middleware. Configure a Clerk instance before running locally; confirm route authorization and role permissions as part of any production deployment.
+Clerk is wired into the root layout and middleware, but the current middleware does **not** enforce sign-in or role authorization. Dashboard routes currently expose sample data for frontend review. Before connecting private data or deploying a live product, add server-enforced route/API authorization using trusted Clerk roles. Selecting a role during demo onboarding does not grant account permissions.
 
 ## Deployment
 
@@ -108,3 +112,55 @@ npm run start
 ```
 
 Set the required Clerk environment variables in your hosting provider. See the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for deployment options.
+
+## Interactive Frontend Workflows
+
+The frontend includes Zod validation for onboarding and opportunity creation,
+native dialogs with focus containment/restoration, toast feedback, role-specific
+mobile navigation, and keyboard-operable tabs. Opportunity drafts can be created, edited, preview-published,
+and deleted. Profile edits, demo applications, request drafts, and admin skill edits
+use validated, tab-scoped `sessionStorage`; they survive reloads in that tab but are
+not account records and must never be used for authorization.
+
+Practice assessments now present questions and calculate a score from the submitted
+answers. The larger skill-analysis dashboard remains explicitly labeled sample data.
+Invitations, messages, mentorship, and training requests are local drafts only; nothing
+is sent externally. Institution/faculty student searches and department filters, candidate filters,
+and admin skill management are connected to their sample datasets. Projects support
+add/edit/remove; learning plans support self-reported demo progress. The copilot is
+a scripted preview, not a connected AI service.
+
+### Browser verification
+
+Start `npm run dev` using its default localhost binding, then run in another terminal:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+The browser suite covers onboarding validation, opportunity draft/publish/delete,
+practice scoring, profile dialogs, applications, project persistence, mobile
+navigation/layouts, and automated accessibility checks. The route audit visits
+39 non-auth static page routes at 390px and 1440px and runs axe checks at 390px.
+It excludes Clerk-hosted authentication and is not a substitute for manual
+screen-reader, cross-browser, or production performance testing. An existing Chromium
+binary can be supplied with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+
+### Build environment note
+
+`npm run build -- --webpack` has passed in this workspace. The default Turbopack
+build encountered a worker/port permission failure in this execution environment.
+Google Fonts also requires network access during the build. The default build
+script is unchanged; Webpack is available as an explicit fallback.
+
+### Remaining production integration
+
+- Backend/API contracts, persistent account data, loading/retry behavior against real services.
+- Clerk sign-in enforcement, trusted role permissions, and organization/data isolation.
+- Real opportunity publishing, application submission, messaging, training/enrollment,
+  mentorship, assessment verification, learning content, and AI responses.
+- Production hosting configuration, cross-browser/manual accessibility review,
+  and a production performance audit.
+
+See `MEMORY.md` for the latest verification results. No site has been deployed.

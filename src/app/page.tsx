@@ -15,7 +15,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 overflow-x-clip">
         <Hero />
         <ProblemSection />
         <HowItWorks />

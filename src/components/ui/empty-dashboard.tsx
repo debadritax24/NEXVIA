@@ -23,7 +23,7 @@ export function EmptyDashboard({
     >
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
         <svg
-          className="h-8 w-8 text-slate-400"
+          className="h-8 w-8 text-slate-500"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}

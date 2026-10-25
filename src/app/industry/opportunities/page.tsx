@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { useDemoOpportunities } from "@/lib/api/demo-opportunities";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { useToast } from "@/components/ui/toast";
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -21,7 +25,10 @@ const statusBadge: Record<string, "success" | "warning" | "default" | "error"> =
 };
 
 export default function IndustryOpportunitiesPage() {
-  const activeOpps = mockOpportunities.filter((o) => o.status === "active");
+  const [records, setRecords] = useDemoOpportunities();
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const { addToast } = useToast();
+  const activeOpps = mockOpportunities.filter((o) => o.status === "active" || o.status === "closing-soon");
   const draftOpps = mockOpportunities.filter((o) => o.status === "draft");
   const closedOpps: typeof mockOpportunities = [];
 
@@ -44,6 +51,16 @@ export default function IndustryOpportunitiesPage() {
         />
       </motion.div>
 
+      <section aria-label="Your demo opportunities" className="space-y-3">
+        <h2 className="text-lg font-semibold">Your demo opportunities</h2>
+        <p className="text-sm text-slate-600">Saved in this browser tab. These records are not public listings.</p>
+        {records.length === 0 && <p className="rounded-lg border border-dashed border-slate-300 p-6 text-sm text-slate-600">No demo opportunities yet. Create one to try the publishing workflow.</p>}
+        {records.map((record) => <article key={record.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4">
+          <div><h3>{record.title}</h3><p className="text-sm text-slate-600">{record.status} · {record.remote ? "Remote" : record.location || "Location pending"}</p></div>
+          <div className="flex gap-3"><Link className="text-sm font-medium underline" href={`/industry/opportunities/new?edit=${record.id}`}>Edit</Link><Button variant="ghost" size="sm" onClick={() => setDeleteId(record.id)}>Delete</Button></div>
+        </article>)}
+      </section>
+      <ConfirmationDialog open={deleteId !== null} onClose={() => setDeleteId(null)} title="Delete demo opportunity?" message="This removes the saved record from this browser tab." confirmLabel="Delete" onConfirm={() => { try { setRecords(records.filter((record) => record.id !== deleteId)); addToast("success", "Demo opportunity deleted."); } catch { addToast("error", "Could not delete the record. Try again."); } }} />
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.1, duration: 0.4 }}>
         <Tabs defaultValue="active">
           <TabsList>
@@ -61,7 +78,7 @@ export default function IndustryOpportunitiesPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="rounded-xl border border-slate-200 bg-white p-5 hover:shadow-sm transition-shadow"
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-base font-semibold text-slate-900">{opp.title}</h3>
@@ -91,15 +108,15 @@ export default function IndustryOpportunitiesPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+                  <div className="flex flex-wrap gap-3 items-center justify-between mt-4 pt-3 border-t border-slate-100">
                     <div className="flex items-center gap-3 text-xs text-slate-500">
                       <span>Posted {opp.postedAt}</span>
                       <span>·</span>
                       <span>Deadline {opp.deadline}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm">Edit</Button>
-                      <Button variant="outline" size="sm">View Applicants</Button>
+                      <Link className="text-sm underline" href={`/opportunities/${opp.id}`}>View sample</Link>
+                      <Link className="text-sm underline" href="/industry/candidates">Browse Candidates</Link>
                     </div>
                   </div>
                 </motion.div>

@@ -1,5 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import { z } from "zod";
+import { useDemoState } from "@/hooks/use-demo-state";
+import { projectSchema } from "@/lib/validations/forms";
+import { Modal } from "@/components/ui/modal";
+import { Input } from "@/components/ui/input";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { useToast } from "@/components/ui/toast";
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -50,16 +58,42 @@ const projects = [
   },
 ];
 
+const projectsSchema = z.array(projectSchema);
+const initialProjects: z.infer<typeof projectsSchema> = [];
 export default function ProjectsPage() {
+  const [saved, saveProjects] = useDemoState("projects", initialProjects, projectsSchema);
+  const [editing, setEditing] = useState<z.infer<typeof projectSchema> | null>(null);
+  const [technologies, setTechnologies] = useState("");
+  const [removeId, setRemoveId] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const { addToast } = useToast();
   return (
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
       <PageHeader
         title="Projects"
         description="Showcase your work and technical projects."
         breadcrumbs={[{ label: "Student", href: "/student" }, { label: "Projects" }]}
-        action={<Button variant="primary" size="sm">Add Project</Button>}
+        action={<Button variant="primary" size="sm" onClick={() => { setError(""); setTechnologies(""); setEditing({ id: crypto.randomUUID(), title: "", description: "", technologies: [], githubUrl: "", liveUrl: "", featured: false }); }}>Add Project</Button>}
       />
 
+      <Modal open={editing !== null} onClose={() => setEditing(null)} title="Edit demo project">
+        {editing && <form className="space-y-4" onSubmit={(event) => {
+          event.preventDefault();
+          const result = projectSchema.safeParse({ ...editing, technologies: technologies.split(",").map((value) => value.trim()).filter(Boolean) });
+          if (!result.success) { setError(result.error.issues.map((issue) => issue.message).join(" ")); return; }
+          try { saveProjects([...saved.filter((project) => project.id !== result.data.id), result.data]); setEditing(null); addToast("success", "Demo project saved."); } catch { setError("Could not save the project. Allow session storage and try again."); }
+        }}>
+          <Input label="Project title" value={editing.title} onChange={(event) => setEditing({ ...editing, title: event.target.value })} />
+          <Input label="Description" value={editing.description} onChange={(event) => setEditing({ ...editing, description: event.target.value })} />
+          <Input label="Technologies (comma separated)" value={technologies} onChange={(event) => setTechnologies(event.target.value)} />
+          <Input label="Repository URL" value={editing.githubUrl} onChange={(event) => setEditing({ ...editing, githubUrl: event.target.value })} />
+          <Input label="Live URL (optional)" value={editing.liveUrl ?? ""} onChange={(event) => setEditing({ ...editing, liveUrl: event.target.value })} />
+          {error && <p role="alert" className="text-sm text-red-700">{error}</p>}<Button type="submit">Save project</Button>
+        </form>}
+      </Modal>
+      <ConfirmationDialog open={removeId !== null} onClose={() => setRemoveId(null)} title="Remove demo project?" message="This removes the project from this browser tab." onConfirm={() => { try { saveProjects(saved.filter((project) => project.id !== removeId)); addToast("success", "Project removed."); } catch { addToast("error", "Could not remove project."); } }} />
+      <section aria-label="Your demo projects" className="mb-6 space-y-3"><h2 className="text-lg">Your demo projects</h2>{saved.length === 0 && <p className="text-sm text-slate-600">Add a project to preview your portfolio.</p>}{saved.map((project) => <article key={project.id} className="rounded-xl border bg-white p-4"><h3>{project.title}</h3><p className="my-2 text-sm text-slate-600">{project.description}</p><p className="mb-2 text-sm">{project.technologies.join(", ")}</p><div className="flex flex-wrap items-center gap-4"><a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-sm underline">Repository</a><Button size="sm" variant="ghost" onClick={() => { setError(""); setEditing(project); setTechnologies(project.technologies.join(", ")); }}>Edit</Button><Button size="sm" variant="ghost" onClick={() => setRemoveId(project.id)}>Remove</Button></div></article>)}</section>
+      <h2 className="mb-4 text-lg">Example portfolio</h2>
       <motion.div
         variants={{ animate: { transition: { staggerChildren: 0.08 } } }}
         initial="initial"

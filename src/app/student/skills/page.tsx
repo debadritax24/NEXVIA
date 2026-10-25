@@ -125,7 +125,7 @@ export default function SkillsPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Verified</span>
-                  <span className="font-semibold text-green-600">{mockSkills.filter((s) => s.verified).length}</span>
+                  <span className="font-semibold text-green-700">{mockSkills.filter((s) => s.verified).length}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Average Proficiency</span>
@@ -135,7 +135,7 @@ export default function SkillsPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Skill Gaps</span>
-                  <span className="font-semibold text-amber-600">{mockSkillGaps.length}</span>
+                  <span className="font-semibold text-amber-700">{mockSkillGaps.length}</span>
                 </div>
               </div>
             </CardContent>
@@ -148,7 +148,7 @@ export default function SkillsPage() {
           <CardTitle>Skill Gap Analysis</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200">

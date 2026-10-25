@@ -36,14 +36,14 @@ const steps = [
     title: "Identify Skill Gaps",
     description: "See exactly where you stand vs. where you need to be for your target roles. Get a clear gap analysis.",
     icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
-    color: "bg-amber-50 text-amber-600",
+    color: "bg-amber-50 text-amber-700",
   },
   {
     number: "04",
     title: "Learn",
     description: "Follow personalized learning paths with curated courses, projects, and resources for your specific gaps.",
     icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
-    color: "bg-green-50 text-green-600",
+    color: "bg-green-50 text-green-700",
   },
   {
     number: "05",
@@ -131,7 +131,7 @@ export default function HowItWorksPage() {
                   </div>
                   <div className="flex-1 pb-8">
                     <div className="flex items-center gap-3 mb-1">
-                      <span className="text-xs font-bold text-slate-400 tracking-wider">{step.number}</span>
+                      <span className="text-xs font-bold text-slate-500 tracking-wider">{step.number}</span>
                       <h3 className="text-xl font-semibold text-slate-900">{step.title}</h3>
                     </div>
                     <p className="text-slate-600 leading-relaxed">{step.description}</p>

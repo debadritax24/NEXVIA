@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { ProfileEditor, useDemoProfile } from "@/components/shared/profile-editor";
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -13,7 +15,9 @@ const fadeInUp = {
 };
 
 export default function ProfilePage() {
-  const profile = mockStudentProfile;
+  const [details, saveDetails] = useDemoProfile();
+  const profile = { ...mockStudentProfile, ...details };
+  const [editing, setEditing] = useState(false);
 
   return (
     <div className="p-6 lg:p-8 max-w-4xl mx-auto">
@@ -21,9 +25,10 @@ export default function ProfilePage() {
         title="Profile"
         description="Manage your personal information and preferences."
         breadcrumbs={[{ label: "Student", href: "/student" }, { label: "Profile" }]}
-        action={<Button variant="outline" size="sm">Edit Profile</Button>}
+        action={<Button variant="outline" size="sm" onClick={() => setEditing(true)}>Edit Profile</Button>}
       />
 
+      {editing && <ProfileEditor initial={details} onSave={saveDetails} onClose={() => setEditing(false)} />}
       <motion.div
         variants={{ animate: { transition: { staggerChildren: 0.08 } } }}
         initial="initial"
@@ -37,7 +42,7 @@ export default function ProfilePage() {
                 <div className="h-16 w-16 rounded-full bg-primary-500/10 flex items-center justify-center text-xl font-bold text-primary-500">
                   {profile.firstName[0]}{profile.lastName[0]}
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0 flex-1 break-words">
                   <h2 className="text-xl font-bold text-slate-900">{profile.firstName} {profile.lastName}</h2>
                   <p className="text-sm text-slate-600">{profile.email}</p>
                   {profile.bio && <p className="text-sm text-slate-600 mt-2">{profile.bio}</p>}

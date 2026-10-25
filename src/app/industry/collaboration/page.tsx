@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { DemoRequestButton } from "@/components/shared/demo-request-button";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -59,7 +59,7 @@ export default function IndustryCollaborationPage() {
         <div className="rounded-xl border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold text-slate-900">Mentorship Programs</h2>
-            <Button variant="outline" size="sm">Start Program</Button>
+            <DemoRequestButton variant="outline" size="sm" requestKey="industry/collaboration-Start Program" title="Start mentorship program">Start Program</DemoRequestButton>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {mentorshipPrograms.map((program, i) => (
@@ -92,7 +92,7 @@ export default function IndustryCollaborationPage() {
         <div className="rounded-xl border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold text-slate-900">Workshops</h2>
-            <Button variant="outline" size="sm">Schedule Workshop</Button>
+            <DemoRequestButton variant="outline" size="sm" requestKey="industry/collaboration-Schedule Workshop" title="Schedule workshop">Schedule Workshop</DemoRequestButton>
           </div>
           <div className="space-y-3">
             {workshops.map((workshop, i) => (
@@ -141,7 +141,7 @@ export default function IndustryCollaborationPage() {
           <div className="rounded-xl border border-slate-200 bg-white p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-slate-900">Innovation Challenges</h2>
-              <Button variant="outline" size="sm">Create Challenge</Button>
+              <DemoRequestButton variant="outline" size="sm" requestKey="industry/collaboration-Create Challenge" title="Create challenge">Create Challenge</DemoRequestButton>
             </div>
             <div className="space-y-3">
               {challenges.map((challenge, i) => (
@@ -168,7 +168,7 @@ export default function IndustryCollaborationPage() {
           <div className="rounded-xl border border-slate-200 bg-white p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-slate-900">Live Projects</h2>
-              <Button variant="outline" size="sm">Post Project</Button>
+              <DemoRequestButton variant="outline" size="sm" requestKey="industry/collaboration-Post Project" title="Post collaboration project">Post Project</DemoRequestButton>
             </div>
             <div className="space-y-3">
               {liveProjects.map((project, i) => (

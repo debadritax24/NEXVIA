@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { StatCard } from "@/components/ui/stat-card";
 import { PageHeader } from "@/components/ui/page-header";
@@ -140,11 +141,11 @@ export default function IndustryDashboardPage() {
       >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-slate-900">Recent Applications</h2>
-          <button className="text-sm font-medium text-primary-500 hover:text-primary-600 transition-colors">
+          <Link href="/industry/candidates" className="text-sm font-medium text-primary-500 hover:text-primary-600 transition-colors">
             View all
-          </button>
+          </Link>
         </div>
-        <div className="overflow-x-auto">
+        <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-100">

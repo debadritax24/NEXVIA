@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { DemoRequestButton } from "@/components/shared/demo-request-button";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -48,7 +48,7 @@ export default function FacultyCollaborationPage() {
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.1, duration: 0.4 }} className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-slate-900">Research Collaborations</h2>
-          <Button variant="outline" size="sm">Propose New</Button>
+          <DemoRequestButton variant="outline" size="sm" requestKey="faculty/collaboration-Propose New" title="Propose collaboration">Propose New</DemoRequestButton>
         </div>
         <div className="space-y-3">
           {researchCollabs.map((collab, i) => (
@@ -110,9 +110,9 @@ export default function FacultyCollaborationPage() {
               <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden mb-3">
                 <div className="h-full rounded-full bg-primary-500" style={{ width: `${(opp.mentees / opp.maxMentees) * 100}%` }} />
               </div>
-              <Button variant={opp.status === "open" ? "primary" : "secondary"} size="sm" className="w-full">
+              <DemoRequestButton requestKey={`mentor-${opp.title}`} title={opp.title} variant={opp.status === "open" ? "primary" : "secondary"} size="sm" className="w-full">
                 {opp.status === "open" ? "Join as Mentor" : "View Details"}
-              </Button>
+              </DemoRequestButton>
             </div>
           ))}
         </div>

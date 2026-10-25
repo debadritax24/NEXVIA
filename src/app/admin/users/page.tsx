@@ -65,7 +65,7 @@ export default function AdminUsersPage() {
     return matchSearch && matchRole;
   });
 
-  const totalPages = Math.ceil(filtered.length / perPage);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const paginated = filtered.slice((page - 1) * perPage, page * perPage);
 
   return (
@@ -101,7 +101,7 @@ export default function AdminUsersPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
+        <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-200">

@@ -1,5 +1,7 @@
 "use client";
 
+import { ApplyButton } from "@/components/shared/apply-button";
+import { DemoBanner } from "@/components/shared/demo-banner";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -29,6 +31,7 @@ export default function OpportunityDetailPage() {
     return (
       <div className="min-h-screen bg-slate-50">
         <Header />
+      <DemoBanner />
         <main className="py-20 text-center">
           <h1 className="text-2xl font-bold text-slate-900">Opportunity Not Found</h1>
           <p className="mt-2 text-slate-600">This opportunity may have been removed.</p>
@@ -51,6 +54,7 @@ export default function OpportunityDetailPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <Header />
+      <DemoBanner />
       <main className="py-8">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
@@ -264,9 +268,7 @@ export default function OpportunityDetailPage() {
                     <span className="text-slate-700">{opportunity.applicants}</span>
                   </div>
                 </div>
-                <Button variant="primary" className="w-full mt-4">
-                  Apply Now
-                </Button>
+<ApplyButton opportunity={opportunity} />
               </motion.div>
             </div>
           </div>

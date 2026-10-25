@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,9 @@ const students = [
 ];
 
 export default function InstitutionStudentsPage() {
+  const [search, setSearch] = useState("");
+  const [department, setDepartment] = useState("All Departments");
+  const filtered = students.filter((student) => (department === "All Departments" || student.department === department) && `${student.name} ${student.department}`.toLowerCase().includes(search.toLowerCase()));
   return (
     <div className="space-y-6">
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ duration: 0.4 }}>
@@ -36,9 +40,9 @@ export default function InstitutionStudentsPage() {
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.1, duration: 0.4 }}>
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
-            <SearchInput placeholder="Search students by name or department..." />
+            <SearchInput value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search students by name or department..." />
           </div>
-          <select className="h-10 px-3 text-sm rounded-lg border border-slate-300 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+          <select aria-label="Department" value={department} onChange={(event) => setDepartment(event.target.value)} className="h-10 px-3 text-sm rounded-lg border border-slate-300 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
             <option>All Departments</option>
             <option>CSE</option>
             <option>IT</option>
@@ -50,7 +54,7 @@ export default function InstitutionStudentsPage() {
       </motion.div>
 
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.2, duration: 0.4 }} className="rounded-xl border border-slate-200 bg-white overflow-hidden">
-        <div className="overflow-x-auto">
+        <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50">
@@ -64,7 +68,8 @@ export default function InstitutionStudentsPage() {
               </tr>
             </thead>
             <tbody>
-              {students.map((student) => (
+              {filtered.length === 0 && <tr><td colSpan={7} className="p-6 text-center">No students match your search.</td></tr>}
+              {filtered.map((student) => (
                 <tr key={student.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">

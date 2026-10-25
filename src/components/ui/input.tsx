@@ -1,4 +1,4 @@
-import { forwardRef, type InputHTMLAttributes } from "react";
+import { forwardRef, useId, type InputHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -9,7 +9,8 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, error, helperText, id, ...props }, ref) => {
-    const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
+    const generatedId = useId();
+    const inputId = id ?? generatedId;
 
     return (
       <div className="w-full">
@@ -22,11 +23,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         <input
+          aria-label={!label ? props["aria-label"] ?? props.placeholder : undefined}
           ref={ref}
           id={inputId}
           className={cn(
             "w-full h-10 px-3 text-sm rounded-lg border bg-white transition-colors",
-            "placeholder:text-slate-400",
+            "placeholder:text-slate-500",
             "focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500",
             error
               ? "border-error-500 focus:ring-error-500/20 focus:border-error-500"

@@ -13,7 +13,7 @@ interface StatCardProps {
 }
 
 export function StatCard({ label, value, change, icon, trend = "neutral", className }: StatCardProps) {
-  const trendColors = { up: "text-green-600", down: "text-red-600", neutral: "text-slate-500" };
+  const trendColors = { up: "text-green-700", down: "text-red-600", neutral: "text-slate-500" };
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
       className={cn("rounded-xl border border-slate-200 bg-white p-5 hover:shadow-sm transition-shadow", className)}>

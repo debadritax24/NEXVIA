@@ -1,5 +1,10 @@
 "use client";
 
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { useDemoApplications } from "@/lib/api/demo-applications";
+import { useToast } from "@/components/ui/toast";
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,6 +41,9 @@ function StatusTimeline({ currentStatus }: { currentStatus: string }) {
 }
 
 export default function ApplicationsPage() {
+  const [applications, saveApplications] = useDemoApplications();
+  const [removeId, setRemoveId] = useState<string | null>(null);
+  const { addToast } = useToast();
   return (
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
       <PageHeader
@@ -44,6 +52,13 @@ export default function ApplicationsPage() {
         breadcrumbs={[{ label: "Student", href: "/student" }, { label: "Applications" }]}
       />
 
+      <section className="mb-6 space-y-3" aria-label="Saved demo applications">
+        <h2 className="text-lg font-semibold">Your demo applications</h2>
+        {applications.length === 0 && <p className="text-sm text-slate-600">No demo applications yet. Browse opportunities to try applying.</p>}
+        {applications.map((item) => <article key={item.id} className="rounded-xl border border-slate-200 bg-white p-4"><h3>{item.title}</h3><p className="text-sm text-slate-600">{item.company} · Saved demo, not submitted</p>{item.statement && <p className="my-2 text-sm">{item.statement}</p>}<Button variant="ghost" size="sm" onClick={() => setRemoveId(item.id)}>Remove demo application</Button></article>)}
+      </section>
+      <ConfirmationDialog open={removeId !== null} onClose={() => setRemoveId(null)} title="Remove demo application?" message="This removes the local preview. It does not withdraw a real application." onConfirm={() => { try { saveApplications(applications.filter((item) => item.id !== removeId)); addToast("success", "Demo application removed."); } catch { addToast("error", "Could not remove this application."); } }} />
+      <h2 className="mb-4 text-lg font-semibold">Sample application tracking</h2>
       <motion.div
         variants={{ animate: { transition: { staggerChildren: 0.06 } } }}
         initial="initial"
@@ -63,7 +78,7 @@ export default function ApplicationsPage() {
                       </span>
                     </div>
                     <p className="text-sm text-slate-600">{app.company} - {app.type}</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                    <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-slate-500">
                       <span>Applied: {app.appliedAt}</span>
                       <span>Updated: {app.updatedAt}</span>
                       <span>Match: {app.matchScore}%</span>

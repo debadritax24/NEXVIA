@@ -23,8 +23,8 @@ const typeIcons: Record<string, string> = {
 const typeColors: Record<string, string> = {
   opportunity: "bg-blue-50 text-blue-600",
   application: "bg-purple-50 text-purple-600",
-  assessment: "bg-amber-50 text-amber-600",
-  mentor: "bg-green-50 text-green-600",
+  assessment: "bg-amber-50 text-amber-700",
+  mentor: "bg-green-50 text-green-700",
   skill: "bg-cyan-50 text-cyan-600",
   platform: "bg-slate-50 text-slate-600",
 };
@@ -69,6 +69,8 @@ export default function NotificationsPage() {
           <motion.div key={notification.id} variants={fadeInUp}>
             <Card
               className={`cursor-pointer transition-colors ${!notification.read ? "border-primary-200 bg-primary-50/30" : ""}`}
+              role="button" tabIndex={0} aria-label={`${notification.title}: ${notification.read ? "read" : "mark as read"}`}
+              onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); markAsRead(notification.id); } }}
               onClick={() => markAsRead(notification.id)}
             >
               <CardContent className="p-4">
@@ -86,7 +88,7 @@ export default function NotificationsPage() {
                       )}
                     </div>
                     <p className="text-sm text-slate-600 mt-0.5">{notification.message}</p>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <p className="text-xs text-slate-500 mt-1">
                       {new Date(notification.createdAt).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",

@@ -1,11 +1,13 @@
 "use client";
 
+import { candidates } from "@/lib/api/candidates";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import { SkillBar } from "@/components/ui/skill-bar";
-import { Button } from "@/components/ui/button";
+import { DemoRequestButton } from "@/components/shared/demo-request-button";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -64,12 +66,14 @@ const candidateData: Record<string, {
   },
 };
 
-const defaultCandidate = candidateData.c1;
 
 export default function CandidateDetailPage() {
   const params = useParams();
   const id = params.id as string;
-  const candidate = candidateData[id] || defaultCandidate;
+  const summary = candidates.find((item) => item.id === id);
+  if (!summary) return <div className="p-6"><h1>Candidate not found</h1><Link href="/industry/candidates" className="underline">Browse candidates</Link></div>;
+  if (!candidateData[id]) return <div className="space-y-6"><PageHeader title={summary.name} description={`${summary.department} · ${summary.institution}`} /><p className="text-sm text-slate-600">This sample candidate has a summary only. A detailed profile has not been provided.</p><div className="flex flex-wrap gap-2">{summary.skills.map((skill) => <Badge key={skill}>{skill}</Badge>)}</div><Link href="/industry/candidates" className="underline">Back to candidates</Link></div>;
+  const candidate = candidateData[id];
 
   return (
     <div className="space-y-6">
@@ -236,8 +240,8 @@ export default function CandidateDetailPage() {
           </motion.div>
 
           <div className="space-y-2">
-            <Button className="w-full" size="lg">Invite to Apply</Button>
-            <Button variant="outline" className="w-full" size="lg">Send Message</Button>
+            <DemoRequestButton className="w-full" size="lg" requestKey={`invite-${id}`} title="Prepare candidate invitation">Invite to Apply</DemoRequestButton>
+            <DemoRequestButton variant="outline" className="w-full" size="lg" requestKey={`message-${id}`} title="Prepare candidate message">Send Message</DemoRequestButton>
           </div>
         </div>
       </div>

@@ -8,9 +8,9 @@ interface MatchScoreProps {
 }
 
 const scoreColor = (score: number) => {
-  if (score >= 80) return "text-green-600 bg-green-50 border-green-200";
+  if (score >= 80) return "text-green-700 bg-green-50 border-green-200";
   if (score >= 60) return "text-primary-500 bg-primary-500/5 border-primary-200";
-  if (score >= 40) return "text-amber-600 bg-amber-50 border-amber-200";
+  if (score >= 40) return "text-amber-700 bg-amber-50 border-amber-200";
   return "text-red-600 bg-red-50 border-red-200";
 };
 

@@ -54,7 +54,7 @@ export function Progress({
       )}
       <div
         className={cn("w-full rounded-full bg-slate-100 overflow-hidden", sizeStyles[size])}
-        role="progressbar"
+        role="progressbar" aria-label={label ?? "Progress"}
         aria-valuenow={value}
         aria-valuemin={0}
         aria-valuemax={max}

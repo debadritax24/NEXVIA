@@ -22,9 +22,9 @@ const heatmapData: Record<string, Record<string, number>> = {
 };
 
 const getColor = (value: number) => {
-  if (value >= 70) return "bg-green-500 text-white";
-  if (value >= 40) return "bg-amber-400 text-white";
-  return "bg-red-500 text-white";
+  if (value >= 70) return "bg-green-700 text-white";
+  if (value >= 40) return "bg-amber-100 text-amber-900";
+  return "bg-red-700 text-white";
 };
 
 const departmentsList = ["All Departments", "CSE", "IT", "ECE", "ME", "CE"];
@@ -47,11 +47,11 @@ export default function InstitutionSkillsPage() {
       </motion.div>
 
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.1, duration: 0.4 }}>
-        <div className="flex items-center gap-3">
-          <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="h-10 px-3 text-sm rounded-lg border border-slate-300 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+        <div className="flex flex-wrap items-center gap-3">
+          <select aria-label="Department" value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="h-10 px-3 text-sm rounded-lg border border-slate-300 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
             {departmentsList.map((d) => <option key={d}>{d}</option>)}
           </select>
-          <select value={skillFilter} onChange={(e) => setSkillFilter(e.target.value)} className="h-10 px-3 text-sm rounded-lg border border-slate-300 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+          <select aria-label="Skill" value={skillFilter} onChange={(e) => setSkillFilter(e.target.value)} className="h-10 px-3 text-sm rounded-lg border border-slate-300 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
             {skillsList.map((s) => <option key={s}>{s}</option>)}
           </select>
         </div>
@@ -60,14 +60,14 @@ export default function InstitutionSkillsPage() {
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.2, duration: 0.4 }} className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="flex items-center gap-4 mb-6">
           <h2 className="text-base font-semibold text-slate-900">Proficiency Legend</h2>
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex flex-wrap items-center gap-3 text-xs">
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-green-500" /><span className="text-slate-600">High (70+)</span></div>
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-amber-400" /><span className="text-slate-600">Medium (40-69)</span></div>
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-red-500" /><span className="text-slate-600">Low (below 40)</span></div>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr>

@@ -1,5 +1,10 @@
 "use client";
 
+import { useState } from "react";
+import { z } from "zod";
+import { useDemoState } from "@/hooks/use-demo-state";
+import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -71,7 +76,13 @@ const difficultyColors: Record<string, string> = {
   Advanced: "bg-red-50 text-red-700",
 };
 
+const progressSchema = z.record(z.string(), z.number().min(0).max(100));
+const initialProgress: Record<string, number> = {};
 export default function LearningPage() {
+  const [progress, saveProgress] = useDemoState("learning", initialProgress, progressSchema);
+  const [selected, setSelected] = useState<(typeof learningPath)[number] | null>(null);
+  const { addToast } = useToast();
+  const items = learningPath.map((item) => ({ ...item, progress: progress[item.skill] ?? item.progress }));
   return (
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
       <PageHeader
@@ -80,6 +91,9 @@ export default function LearningPage() {
         breadcrumbs={[{ label: "Student", href: "/student" }, { label: "Learning" }]}
       />
 
+      <Modal open={selected !== null} onClose={() => setSelected(null)} title={selected?.title ?? "Learning preview"}>
+        {selected && <div className="space-y-4"><p className="text-sm text-slate-600">Sample learning plan for {selected.skill}. Provider content is not connected. Progress below is self-reported demo progress, not certification.</p><ol className="list-inside list-decimal space-y-2 text-sm"><li>Review the core concepts and terminology.</li><li>Build a small project using {selected.skill}.</li><li>Document what you learned and add the project to your portfolio.</li></ol><label htmlFor="learning-progress" className="block text-sm font-medium">Your reported progress: {progress[selected.skill] ?? selected.progress}%</label><input id="learning-progress" type="range" min={0} max={100} step={10} value={progress[selected.skill] ?? selected.progress} className="w-full" onChange={(event) => { try { saveProgress({ ...progress, [selected.skill]: Number(event.target.value) }); } catch { addToast("error", "Could not save progress. Allow session storage and try again."); } }} /><Button onClick={() => { addToast("info", "Demo progress saved. No credentials awarded."); setSelected(null); }}>Done</Button></div>}
+      </Modal>
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -96,11 +110,11 @@ export default function LearningPage() {
                 <p className="text-sm text-slate-600">Courses Recommended</p>
               </div>
               <div className="text-center p-4 rounded-lg bg-slate-50">
-                <p className="text-2xl font-bold text-primary-500">1</p>
+                <p className="text-2xl font-bold text-primary-500">{items.filter((item) => item.progress > 0 && item.progress < 100).length}</p>
                 <p className="text-sm text-slate-600">In Progress</p>
               </div>
               <div className="text-center p-4 rounded-lg bg-slate-50">
-                <p className="text-2xl font-bold text-green-600">0</p>
+                <p className="text-2xl font-bold text-green-700">{items.filter((item) => item.progress === 100).length}</p>
                 <p className="text-sm text-slate-600">Completed</p>
               </div>
             </div>
@@ -109,7 +123,7 @@ export default function LearningPage() {
       </motion.div>
 
       <div className="space-y-4">
-        {learningPath.map((item, index) => (
+        {items.map((item, index) => (
           <motion.div
             key={item.step}
             initial={{ opacity: 0, y: 12 }}
@@ -151,7 +165,7 @@ export default function LearningPage() {
                         </svg>
                         <span className="text-slate-600">{item.rating}</span>
                       </div>
-                      <Button variant="primary" size="sm">
+                      <Button variant="primary" size="sm" onClick={() => setSelected(item)}>
                         {item.progress > 0 ? "Continue" : "Start"}
                       </Button>
                     </div>

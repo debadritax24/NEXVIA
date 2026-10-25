@@ -36,7 +36,7 @@ export default function CopilotPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I am your AI Career Copilot. I can help you with skill recommendations, interview prep, career guidance, and more. What would you like to know?",
+      content: "Hello! This is a scripted Career Copilot demo. I can help you with skill recommendations, interview prep, career guidance, and more. What would you like to know?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -50,7 +50,7 @@ export default function CopilotPage() {
     setInput("");
 
     setTimeout(() => {
-      const response = mockResponses[text] || `That is a great question about "${text}". Based on your skill profile, I would recommend focusing on practical projects and continuous learning. Your current readiness is 72%, and with targeted effort, you can reach 85%+ within 3 months.`;
+      const response = mockResponses[text] || "This demo has scripted answers only. Choose one of the suggested questions to preview the experience.";
       setMessages((prev) => [...prev, { role: "assistant", content: response }]);
     }, 500);
   };
@@ -59,7 +59,7 @@ export default function CopilotPage() {
     <div className="p-6 lg:p-8 max-w-4xl mx-auto h-[calc(100vh-4rem)] flex flex-col">
       <PageHeader
         title="AI Career Copilot"
-        description="Get personalized career guidance powered by AI."
+        description="Preview scripted answers using the sample profile. No AI service is connected."
         breadcrumbs={[{ label: "Student", href: "/student" }, { label: "AI Copilot" }]}
       />
 
@@ -107,12 +107,13 @@ export default function CopilotPage() {
             <div className="border-t border-slate-200 p-4">
               <div className="flex items-center gap-3">
                 <input
+                  aria-label="Message the demo copilot"
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   placeholder="Ask about skills, careers, interview prep..."
-                  className="flex-1 h-10 px-4 text-sm rounded-lg border border-slate-300 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors"
+                  className="flex-1 h-10 px-4 text-sm rounded-lg border border-slate-300 bg-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors"
                 />
                 <Button onClick={() => handleSend()} variant="primary" size="md">
                   Send

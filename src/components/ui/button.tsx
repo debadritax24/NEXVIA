@@ -19,7 +19,7 @@ const variantStyles: Record<ButtonVariant, string> = {
     "border-2 border-slate-300 text-slate-700 hover:border-primary-500 hover:text-primary-500 active:bg-slate-50",
   ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200",
   accent:
-    "bg-accent-500 text-white hover:bg-accent-600 active:bg-accent-700 shadow-sm",
+    "bg-accent-700 text-white hover:bg-accent-800 active:bg-accent-700 shadow-sm",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -43,6 +43,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     return (
       <button
+        type="button"
+        aria-busy={loading || undefined}
         ref={ref}
         disabled={disabled || loading}
         className={cn(

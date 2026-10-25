@@ -50,7 +50,7 @@ export function InstitutionIntelligence() {
               <div key={i} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                 <p className="text-sm text-slate-500 mb-1">{metric.label}</p>
                 <p className="text-2xl font-bold text-slate-900">{metric.value}</p>
-                <p className="text-xs text-green-600 mt-1">{metric.change}</p>
+                <p className="text-xs text-green-700 mt-1">{metric.change}</p>
               </div>
             ))}
           </motion.div>

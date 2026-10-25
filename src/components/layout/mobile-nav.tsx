@@ -8,30 +8,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { navLinks } from "@/config";
 
-const mobileDashboardLinks = [
-  { label: "Dashboard", href: "/student" },
-  { label: "My Skills", href: "/student/skills" },
-  { label: "Assessment", href: "/student/assessment" },
-  { label: "Learning", href: "/student/learning" },
-  { label: "Career", href: "/student/career" },
-  { label: "Opportunities", href: "/opportunities" },
-  { label: "Applications", href: "/student/applications" },
-  { label: "Skill Passport", href: "/student/passport" },
-  { label: "Mentorship", href: "/student/mentorship" },
-  { label: "AI Copilot", href: "/student/copilot" },
-  { label: "Profile", href: "/student/profile" },
-];
+import { roleLinksMap } from "@/config/navigation";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const isDashboard = pathname.startsWith("/student") || pathname.startsWith("/industry") || pathname.startsWith("/institution") || pathname.startsWith("/faculty");
-  const links = isDashboard ? mobileDashboardLinks : navLinks;
+  const role = pathname.split("/")[1].toUpperCase();
+  const links = roleLinksMap[role] ?? (role === "DASHBOARD" ? roleLinksMap.STUDENT : navLinks);
 
   return (
     <>
       <button type="button" className="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-slate-600 hover:bg-slate-100"
-        onClick={() => setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>
+        onClick={() => setOpen(!open)} aria-controls="mobile-menu" aria-label="Toggle menu" aria-expanded={open}>
         {open ? (
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         ) : (
@@ -40,7 +28,7 @@ export function MobileNav() {
       </button>
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+          <motion.nav id="mobile-menu" aria-label="Mobile navigation" onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }} initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }} className="lg:hidden border-t border-slate-200 bg-white overflow-hidden fixed inset-x-0 top-16 z-50">
             <div className="px-4 py-4 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
               {links.map((link) => (
@@ -62,7 +50,7 @@ export function MobileNav() {
                 </Show>
               </div>
             </div>
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
     </>

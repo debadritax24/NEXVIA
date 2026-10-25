@@ -49,7 +49,7 @@ export function ConfirmationDialog({
     <Modal open={open} onClose={onClose} title={title} size="sm">
       <div className="flex flex-col items-center text-center">
         <div
-          className={`mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-${variant === "danger" ? "red" : variant === "warning" ? "amber" : "blue"}-100`}
+          className={`mb-4 flex h-12 w-12 items-center justify-center rounded-full ${{ danger: "bg-red-100", warning: "bg-amber-100", info: "bg-blue-100" }[variant]}`}
         >
           <svg
             className={`h-6 w-6 ${iconColors[variant]}`}

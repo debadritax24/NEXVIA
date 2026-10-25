@@ -1,5 +1,10 @@
 "use client";
 
+import { z } from "zod";
+import { useDemoState } from "@/hooks/use-demo-state";
+import { Modal } from "@/components/ui/modal";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { useToast } from "@/components/ui/toast";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -48,11 +53,18 @@ const categoryVariant = (cat: string) => {
   return map[cat] || "default";
 };
 
+const skillsSchema = z.array(z.object({ id: z.string(), name: z.string().trim().min(1).max(80), category: z.enum(["Frontend", "Backend", "Database", "DevOps", "Cloud", "API"]), avgProficiency: z.number(), studentCount: z.number() }));
+
 export default function AdminSkillsPage() {
+  const [skills, saveSkills] = useDemoState<Skill[]>("admin-skills", mockSkills, skillsSchema);
+  const [editing, setEditing] = useState<Skill | null>(null);
+  const [deleting, setDeleting] = useState<Skill | null>(null);
+  const [error, setError] = useState("");
+  const { addToast } = useToast();
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
 
-  const filtered = mockSkills.filter((s) => {
+  const filtered = skills.filter((s) => {
     const matchSearch = s.name.toLowerCase().includes(search.toLowerCase());
     const matchCat = filterCategory === "All" || s.category === filterCategory;
     return matchSearch && matchCat;
@@ -60,12 +72,20 @@ export default function AdminSkillsPage() {
 
   return (
     <div>
+      <Modal open={editing !== null} onClose={() => setEditing(null)} title="Edit demo skill">
+        {editing && <form className="space-y-4" onSubmit={(event) => {
+          event.preventDefault();
+          if (!editing.name.trim() || skills.some((skill) => skill.id !== editing.id && skill.name.toLowerCase() === editing.name.trim().toLowerCase())) { setError("Enter a unique skill name."); return; }
+          try { saveSkills([...skills.filter((skill) => skill.id !== editing.id), { ...editing, name: editing.name.trim() }]); setEditing(null); addToast("success", "Demo skill saved."); } catch { setError("Could not save this skill. Check the name and browser storage."); }
+        }}><Input label="Skill name" value={editing.name} maxLength={80} onChange={(event) => setEditing({ ...editing, name: event.target.value })} error={error} /><label htmlFor="skill-category" className="block text-sm font-medium">Category</label><select id="skill-category" className="w-full rounded-lg border p-3" value={editing.category} onChange={(event) => setEditing({ ...editing, category: event.target.value })}>{categories.slice(1).map((category) => <option key={category}>{category}</option>)}</select><Button type="submit">Save skill</Button></form>}
+      </Modal>
+      <ConfirmationDialog open={deleting !== null} onClose={() => setDeleting(null)} title="Delete demo skill?" message={`Remove ${deleting?.name ?? "this skill"} from this tab's sample catalog?`} onConfirm={() => { try { saveSkills(skills.filter((skill) => skill.id !== deleting?.id)); addToast("success", "Demo skill removed."); } catch { addToast("error", "Could not remove this skill."); } }} />
       <PageHeader
         title="Skill Management"
         description="Manage and monitor all skills in the platform"
         breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Skills" }]}
         action={
-          <Button size="sm">
+          <Button size="sm" onClick={() => { setError(""); setEditing({ id: crypto.randomUUID(), name: "", category: "Frontend", avgProficiency: 0, studentCount: 0 }); }}>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
@@ -99,7 +119,7 @@ export default function AdminSkillsPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
+        <div tabIndex={0} role="region" aria-label="Scrollable data table" className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-200">
@@ -138,12 +158,12 @@ export default function AdminSkillsPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <button className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
+                      <button aria-label={`Edit ${skill.name}`} onClick={() => { setError(""); setEditing(skill); }} className="p-1.5 rounded-md text-slate-500 hover:text-slate-600 hover:bg-slate-100 transition-colors">
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </button>
-                      <button className="p-1.5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                      <button aria-label={`Delete ${skill.name}`} onClick={() => setDeleting(skill)} className="p-1.5 rounded-md text-slate-500 hover:text-red-500 hover:bg-red-50 transition-colors">
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>

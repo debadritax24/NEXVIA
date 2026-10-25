@@ -73,7 +73,7 @@ export function IndustryConnection() {
               </div>
               <div className="flex items-center justify-center gap-2 mb-3">
                 <span className="text-sm font-semibold text-slate-900">{conn.from}</span>
-                <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
                 <span className="text-sm font-semibold text-slate-900">{conn.to}</span>

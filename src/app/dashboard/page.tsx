@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 
 const stats = [
   { label: "Industry Readiness", value: "72%", change: "+5% this week", color: "text-primary-500" },
-  { label: "Skills Assessed", value: "12", change: "3 verified", color: "text-green-600" },
+  { label: "Skills Assessed", value: "12", change: "3 verified", color: "text-green-700" },
   { label: "Skill Gaps", value: "5", change: "2 high priority", color: "text-accent-500" },
   { label: "Applications", value: "3", change: "1 in review", color: "text-indigo-600" },
 ];
@@ -142,7 +143,8 @@ export default function DashboardPage() {
             { label: "Find Jobs", icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
             { label: "Skill Passport", icon: "M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" },
           ].map((action) => (
-            <button
+            <Link
+              href={{ "Take Assessment": "/student/assessment", "View Gaps": "/student/skills", "Find Jobs": "/opportunities", "Skill Passport": "/student/passport" }[action.label] ?? "/student"}
               key={action.label}
               className="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-primary-500 hover:bg-primary-500/5 transition-all text-center"
             >
@@ -150,7 +152,7 @@ export default function DashboardPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={action.icon} />
               </svg>
               <span className="text-sm font-medium text-slate-700">{action.label}</span>
-            </button>
+            </Link>
           ))}
         </div>
       </motion.div>

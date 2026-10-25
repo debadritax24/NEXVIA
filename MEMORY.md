@@ -83,3 +83,48 @@ Phase 4 — Loading/Error States + Shared Components Built
 ## Next Recommended Task
 
 Integrate the new shared components (Toast, Modal, ConfirmationDialog) into existing pages, then add Zod form validation for onboarding and opportunity creation forms.
+
+## Frontend Implementation Audit — 2026-10-25 (in progress)
+
+Actual source inspection found gaps beyond the original checklist: onboarding's
+experience choices had no inputs, opportunity actions were inert, mobile dashboard
+navigation was missing, admin sidebar fell back to student links, modal/toast portals
+referenced `document` during server rendering, and assessments linked straight to
+fixed sample results. Clerk middleware initializes Clerk but does not enforce route
+protection; role authorization remains a production integration requirement.
+
+Implemented in this pass so far:
+- Zod schemas and step validation; onboarding saves a demo profile and navigates to
+  the selected role without changing account permissions.
+- Opportunity drafts with tab-scoped storage, editing, validation, confirmation,
+  demo publishing and deletion.
+- SSR-safe native dialog/drawer, toast provider, focus restoration, accessible tabs,
+  labeled inputs, reduced-motion configuration and Lenis animation-frame cleanup.
+- Shared role navigation, admin links and dashboard mobile headers.
+- Editable demo profile, saved demo applications/removal, and service-request drafts.
+- Practice assessment questions, answer submission and calculated results; sample
+  analytics remain separate.
+- Institution/faculty student filters and admin skill add/edit/delete.
+- Playwright and axe tooling with workflow, mobile and accessibility tests.
+
+Checks: baseline lint/typecheck passed (one existing avatar image warning). Intermediate
+lint/typecheck passed before the most recent additions. Browser verification is in
+progress; sandbox restrictions require elevated local server/browser execution. Do
+not treat the earlier phase's "all routes HTTP 200" claim as current verification.
+
+Remaining in this active pass: complete the frontend interaction audit, finish browser
+checks/fixes, run final lint/typecheck/build, and replace this in-progress entry with
+verified results. Production backend, live data, real messaging/publishing, and
+server-enforced role permissions are not implemented by demo storage.
+
+Progress update:
+- Project portfolio add/edit/remove and self-reported learning progress are connected.
+- Candidate search/department/institution/year filters are wired; unavailable detailed
+  profiles no longer silently display a different candidate's data.
+- Scripted copilot responses are labeled; no live AI integration is implied.
+- Production build passed with `npm run build -- --webpack`. Default Turbopack failed
+  on an environment worker/port permission error; this remains a tooling limitation.
+- Opportunity create/draft/reload/edit/demo-publish/delete passed Playwright.
+- Browser audit found a progressbar missing a name (fixed), a test selector collision
+  with Next's route announcer (fixed), and landing-page reveal overflow (fix applied,
+  pending recheck). Broader route audit is still running.

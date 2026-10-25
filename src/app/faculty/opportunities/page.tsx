@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { DemoRequestButton } from "@/components/shared/demo-request-button";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -56,9 +56,9 @@ export default function FacultyOpportunitiesPage() {
               <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden mb-3">
                 <div className="h-full rounded-full bg-accent-500" style={{ width: `${(opp.enrolled / opp.spots) * 100}%` }} />
               </div>
-              <Button variant={opp.status === "full" ? "secondary" : "primary"} size="sm" className="w-full" disabled={opp.status === "full"}>
+              <DemoRequestButton requestKey={`faculty/opportunities-${opp.title}`} title={opp.title} variant={opp.status === "full" ? "secondary" : "primary"} size="sm" className="w-full" disabled={opp.status === "full"}>
                 {opp.status === "full" ? "Full" : "Apply"}
-              </Button>
+              </DemoRequestButton>
             </div>
           ))}
         </div>
@@ -76,7 +76,7 @@ export default function FacultyOpportunitiesPage() {
               <h3 className="text-sm font-semibold text-slate-900 mb-1">{opp.title}</h3>
               <p className="text-xs text-slate-500 mb-2">{opp.company} · {opp.duration}</p>
               <p className="text-xs text-slate-500 mb-3">Deadline: {opp.deadline} · {opp.enrolled}/{opp.spots} enrolled</p>
-              <Button variant="primary" size="sm" className="w-full">Apply</Button>
+              <DemoRequestButton requestKey={`faculty/opportunities-${opp.title}`} title={opp.title} variant="primary" size="sm" className="w-full">Apply</DemoRequestButton>
             </div>
           ))}
         </div>
@@ -90,7 +90,7 @@ export default function FacultyOpportunitiesPage() {
               <div key={i} className="p-4 rounded-lg border border-slate-100">
                 <div className="flex items-center justify-between mb-2">
                   <Badge variant="success" size="sm">{opp.type}</Badge>
-                  <span className="text-xs font-semibold text-green-600">{opp.budget}</span>
+                  <span className="text-xs font-semibold text-green-700">{opp.budget}</span>
                 </div>
                 <h3 className="text-sm font-semibold text-slate-900 mb-1">{opp.title}</h3>
                 <p className="text-xs text-slate-500">{opp.company} · {opp.duration} · Deadline: {opp.deadline}</p>
@@ -106,7 +106,7 @@ export default function FacultyOpportunitiesPage() {
               <div key={i} className="p-4 rounded-lg border border-slate-100">
                 <div className="flex items-center justify-between mb-2">
                   <Badge variant="warning" size="sm">{opp.type}</Badge>
-                  <span className="text-xs font-semibold text-amber-600">{opp.funding} funding</span>
+                  <span className="text-xs font-semibold text-amber-700">{opp.funding} funding</span>
                 </div>
                 <h3 className="text-sm font-semibold text-slate-900 mb-1">{opp.title}</h3>
                 <div className="flex flex-wrap gap-1.5 mt-2">

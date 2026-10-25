@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { DemoRequestButton } from "@/components/shared/demo-request-button";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -52,7 +52,7 @@ export default function InstitutionTrainingPage() {
       <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.1, duration: 0.4 }} className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-slate-900">Recommended Workshops</h2>
-          <Button variant="outline" size="sm">Schedule New</Button>
+          <DemoRequestButton variant="outline" size="sm" requestKey="institution/training-Schedule New" title="Schedule training">Schedule New</DemoRequestButton>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {workshops.map((w, i) => (
@@ -123,12 +123,12 @@ export default function InstitutionTrainingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 rounded-lg bg-green-50 border border-green-100">
             <p className="text-2xl font-bold text-green-700">3</p>
-            <p className="text-sm text-green-600">High Impact Programs</p>
+            <p className="text-sm text-green-700">High Impact Programs</p>
             <p className="text-xs text-green-500 mt-1">Targeting critical skill gaps</p>
           </div>
           <div className="p-4 rounded-lg bg-amber-50 border border-amber-100">
             <p className="text-2xl font-bold text-amber-700">3</p>
-            <p className="text-sm text-amber-600">Medium Impact Sessions</p>
+            <p className="text-sm text-amber-700">Medium Impact Sessions</p>
             <p className="text-xs text-amber-500 mt-1">Supplementary learning</p>
           </div>
           <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
